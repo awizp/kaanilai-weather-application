@@ -219,5 +219,3 @@ const updateDateTime = () => {
 
     $('#date-time').html(`${formattedDate} | ${formattedTime}`);
 };
-
-
