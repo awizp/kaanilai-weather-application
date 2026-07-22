@@ -31,6 +31,7 @@ const GEO_BASE_URL = import.meta.env.VITE_GEO_BASE_URL;
 const GEO_API_KEY = import.meta.env.VITE_GEO_API_KEY;
 const WEATHER_URL = import.meta.env.VITE_OPEN_METEO_URL;
 
+// chennai coordinates while document loading
 let activeCoordinates = {
     lat: (13.0843).toFixed(2),
     lon: (80.2705).toFixed(2)
@@ -180,19 +181,25 @@ $('document').ready(() => {
 // render the ui based on weather data
 const fetchWeatherDetails = (weather) => {
     // finding weather code
-    const weather_code = weather.daily.weather_code[0];
+    const weather_code = weather.current.weather_code;
+    const daily_weather_code = weather.daily.weather_code[0];
+
+    // finding daily weather probability
     const weatherDetail = weatherData.find(w => w.weatherCode === weather_code);
+    const dailyWeather = weatherData.find(w => w.weatherCode === daily_weather_code);
 
     $('#weather-temperature').text(`${weather.current.temperature_2m}°`);
     $('#weather-windspeed').text(weather.current.wind_speed_10m);
     $('#weather-humidity').text(weather.current.relative_humidity_2m);
     $('#weather-sunrise').text(formatWeatherTime(weather.daily.sunrise[0], timezone.offsetseconds));
     $('#weather-sunset').text(formatWeatherTime(weather.daily.sunset[0], timezone.offsetseconds));
+    $('#weather-probability').text(dailyWeather.weather.toLocaleLowerCase());
+    $('#weather-icon').html(dailyWeather.icon);
     $('#weather-uvindex').text(weather.current.uv_index);
 
     if (weatherDetail) {
         $('#weather-title').text(weatherDetail.weather);
-        $('#weather-condition').text(`${weatherDetail.condition} locks today’s vibe`);
+        $('#weather-condition').text(weatherDetail.condition);
         $('#weather-details').text(weatherDetail.detail);
         $('#weather-video').attr('src', weatherDetail.background);
     } else {
